@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Huno — A Really Good Friend</title>
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=DM+Sans:wght@400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: #3a2d4f;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  background: #F9EFC8;
+}
+
+:root {
+  --violet: #8C7ED9;
+  --violet-deep: #6B5BA8;
+  --cream: #F9EFC8;
+  --peach: #F6C7A8;
+  --text-dark: #3a2d4f;
+}
+
+/* ===== PAGE BACKGROUND ===== */
+.page-wrapper {
+  background-image: url('day-bg.png');
+  background-size: cover;
+  background-position: top center;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+/* ===== FLOATING PETALS ===== */
+.petals-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.petal {
+  position: absolute;
+  opacity: 0.7;
+  animation: floatPetal linear infinite;
+}
+
+@keyframes floatPetal {
+  0% { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0; }
+  5% { opacity: 0.7; }
+  50% { transform: translateY(50vh) translateX(50px) rotate(180deg); }
+  95% { opacity: 0.7; }
+  100% { transform: translateY(100vh) translateX(100px) rotate(360deg); opacity: 0; }
+}
+
+/* ===== NAVIGATION - PEACH ===== */
+.nav-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(246, 199, 168, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.logo {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: var(--violet);
+  text-decoration: none;
+}
+
+.hamburger {
+  width: 28px;
+  height: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  cursor: pointer;
+  z-index: 1001;
+}
+
+.hamburger span {
+  display: block;
+  height: 3px;
+  background: var(--violet);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.hamburger.active span:nth-child(1) { transform: translateY(8.5px) rotate(45deg); }
+.hamburger.active span:nth-child(2) { opacity: 0; }
+.hamburger.active span:nth-child(3) { transform: translateY(-8.5px) rotate(-45deg); }
+
+/* Mobile Menu */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 280px;
+  height: 100vh;
+  background: rgba(253, 246, 238, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 100px 40px 40px;
+  transition: right 0.3s ease;
+  z-index: 999;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.mobile-menu.active { right: 0; }
+
+.mobile-menu a {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: var(--violet);
+  text-decoration: none;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(140, 126, 217, 0.2);
+  transition: color 0.2s;
+}
+
+.mobile-menu a:hover { color: var(--violet-deep); }
+
+.menu-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 998;
+}
+
+.menu-overlay.active { opacity: 1; visibility: visible; }
+
+/* ===== HERO SECTION ===== */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 24px 60px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-avatar-wrapper {
+  position: relative;
+  margin-bottom: 24px;
+  display: inline-block;
+}
+
+.hero-avatar {
+  width: 220px;
+  height: auto;
+  display: block;
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 8px 24px rgba(255, 200, 120, 0.4));
+  animation: gentleFloat 4s ease-in-out infinite;
+}
+
+@keyframes gentleFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+/* Shadow: Huno ~130px wide at 220 display, shadow extends 30px each side = 190px
+   Position ~95px from bottom to align with seated position */
+.hero-avatar-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 95px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 190px;
+  height: 24px;
+  background: radial-gradient(ellipse at center, rgba(50, 35, 20, 0.3) 0%, rgba(50, 35, 20, 0.15) 45%, transparent 70%);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+/* Warm glow behind avatar */
+.hero-avatar-wrapper::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, rgba(255, 220, 150, 0.4) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 0;
+  animation: pulseGlow 3s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.05); }
+}
+
+/* ===== INTRO CARD - Warm peach with purple 3D shadows ===== */
+.intro-card {
+  max-width: 600px;
+  background: linear-gradient(135deg, #FFF0E2 0%, #FFE8D6 100%);
+  border-radius: 28px;
+  padding: 40px 32px;
+  text-align: center;
+  border: 1px solid rgba(200, 170, 190, 0.35);
+  box-shadow: 
+    0 1px 2px rgba(140, 126, 217, 0.1),
+    0 4px 8px rgba(140, 126, 217, 0.1),
+    0 8px 16px rgba(140, 126, 217, 0.08),
+    0 16px 32px rgba(140, 126, 217, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.intro-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 2px 4px rgba(140, 126, 217, 0.12),
+    0 8px 16px rgba(140, 126, 217, 0.12),
+    0 16px 32px rgba(140, 126, 217, 0.1),
+    0 24px 48px rgba(140, 126, 217, 0.08);
+}
+
+.hero-title {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 2.8rem;
+  color: var(--violet);
+  line-height: 1.2;
+  margin-bottom: 20px;
+}
+
+.intro-text {
+  font-size: 1.1rem;
+  line-height: 1.75;
+  color: var(--text-dark);
+  margin-bottom: 28px;
+}
+
+.app-store-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--violet);
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 14px 32px;
+  border-radius: 30px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(140, 126, 217, 0.35);
+}
+
+.app-store-btn:hover {
+  background: var(--violet-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(140, 126, 217, 0.45);
+}
+
+.app-store-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* ===== FEATURES SECTION - Purple container with title inside ===== */
+.features-section {
+  padding: 80px 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.features-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.features-container {
+  background: linear-gradient(180deg, #7B6BA8 0%, #6A5A97 50%, #7868A7 100%);
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 8px 32px rgba(100, 80, 160, 0.25);
+}
+
+.features-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: white;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.features-grid-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Top row: 3 cards */
+.features-row-top {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* Bottom row: 2 cards centered */
+.features-row-bottom {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  max-width: 66%;
+  margin: 0 auto;
+}
+
+.feature-card {
+  background: rgba(160, 150, 200, 0.5);
+  border-radius: 14px;
+  padding: 18px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 2px 4px rgba(60, 40, 100, 0.15),
+    0 4px 8px rgba(60, 40, 100, 0.1),
+    0 8px 16px rgba(60, 40, 100, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 4px 8px rgba(60, 40, 100, 0.18),
+    0 8px 16px rgba(60, 40, 100, 0.12),
+    0 12px 24px rgba(60, 40, 100, 0.1);
+}
+
+.feature-icon {
+  font-size: 1.4rem;
+  margin-bottom: 8px;
+}
+
+.feature-icon-avatar {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.feature-card h3 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: white;
+  margin-bottom: 8px;
+}
+
+.feature-card p {
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* ===== DIFFERENTIATORS SECTION - Centered title, 2x2 grid ===== */
+.diff-section {
+  padding: 80px 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.diff-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 1.8rem;
+  color: #4A3370;
+  text-align: center;
+  margin-bottom: 40px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.6);
+}
+
+.diff-grid {
+  max-width: 800px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.diff-card {
+  background: linear-gradient(135deg, #FFF0E2 0%, #FFE8D6 100%);
+  border-radius: 18px;
+  padding: 26px 22px;
+  border: 1px solid rgba(200, 170, 190, 0.35);
+  box-shadow: 
+    0 1px 2px rgba(140, 126, 217, 0.1),
+    0 4px 8px rgba(140, 126, 217, 0.1),
+    0 8px 16px rgba(140, 126, 217, 0.08),
+    0 16px 32px rgba(140, 126, 217, 0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.diff-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 
+    0 2px 4px rgba(140, 126, 217, 0.12),
+    0 8px 16px rgba(140, 126, 217, 0.12),
+    0 16px 32px rgba(140, 126, 217, 0.1),
+    0 24px 48px rgba(140, 126, 217, 0.08);
+}
+
+.diff-card h3 {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #4A3370;
+  margin-bottom: 10px;
+}
+
+.diff-card p {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: #3a2d4f;
+}
+
+/* ===== NIGHT QUOTE STRIP ===== */
+.quote-strip {
+  background-image: url('night-bg.png');
+  background-size: cover;
+  background-position: center;
+  padding: 80px 24px;
+  position: relative;
+  z-index: 2;
+}
+
+.quote-strip::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 20, 60, 0.3);
+}
+
+.quote-text {
+  font-family: 'Caveat', cursive;
+  font-weight: 700;
+  font-size: 2.2rem;
+  color: rgba(255, 255, 255, 0.95);
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.3;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== PRICING SECTION ===== */
+.pricing-section {
+  padding: 80px 24px 100px;
+  position: relative;
+  z-index: 2;
+}
+
+.pricing-card {
+  max-width: 380px;
+  margin: 0 auto;
+  background: linear-gradient(135deg, #FFF0E2 0%, #FFE8D6 100%);
+  border-radius: 28px;
+  padding: 40px 32px;
+  text-align: center;
+  border: 1px solid rgba(200, 170, 190, 0.35);
+  box-shadow: 
+    0 1px 2px rgba(140, 126, 217, 0.1),
+    0 4px 8px rgba(140, 126, 217, 0.1),
+    0 8px 16px rgba(140, 126, 217, 0.08),
+    0 16px 32px rgba(140, 126, 217, 0.06);
+}
+
+.pricing-avatar-wrapper {
+  position: relative;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.pricing-avatar {
+  width: 100px;
+  height: auto;
+  filter: drop-shadow(0 4px 12px rgba(255, 200, 120, 0.4));
+}
+
+/* Shadow proportional to 100px display
+   Huno ~59px wide, shadow extends ~14px each side = 87px
+   Bottom ~43px proportional to hero */
+.pricing-avatar-wrapper::after {
+  content: '';
+  position: absolute;
+  bottom: 43px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 87px;
+  height: 12px;
+  background: radial-gradient(ellipse at center, rgba(50, 35, 20, 0.25) 0%, rgba(50, 35, 20, 0.12) 45%, transparent 70%);
+  border-radius: 50%;
+}
+
+.pricing-price {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 2.8rem;
+  color: var(--violet);
+  margin-bottom: 4px;
+}
+
+.pricing-period {
+  font-size: 1rem;
+  color: var(--text-dark);
+  opacity: 0.7;
+  margin-bottom: 8px;
+}
+
+.pricing-trial {
+  display: inline-block;
+  font-size: 0.9rem;
+  color: #5a4a3a;
+  font-weight: 600;
+  background: rgba(246, 199, 168, 0.5);
+  padding: 6px 16px;
+  border-radius: 20px;
+  margin-bottom: 24px;
+}
+
+.pricing-features {
+  list-style: none;
+  margin-bottom: 28px;
+  text-align: left;
+}
+
+.pricing-features li {
+  font-size: 0.95rem;
+  color: var(--text-dark);
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(180, 140, 120, 0.2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.pricing-features li::before {
+  content: '✓';
+  color: #E8A87C;
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.pricing-features li:last-child { border-bottom: none; }
+
+.trial-btn {
+  display: inline-block;
+  background: var(--violet);
+  color: white;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 16px 40px;
+  border-radius: 30px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(140, 126, 217, 0.35);
+}
+
+.trial-btn:hover {
+  background: var(--violet-deep);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(140, 126, 217, 0.45);
+}
+
+/* ===== FOOTER - Same peach as nav bar ===== */
+.footer {
+  padding: 40px 24px;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  background: rgba(246, 199, 168, 0.95);
+}
+
+.footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  font-size: 1rem;
+  color: #4A3370;
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover {
+  color: #6B5BA8;
+  text-decoration: underline;
+}
+
+.footer-copy {
+  font-size: 0.9rem;
+  color: #4A3370;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .features-row-top {
+    grid-template-columns: 1fr;
+  }
+  .features-row-bottom {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+  .diff-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .hero-title { font-size: 2.2rem; }
+  .hero-avatar { width: 180px; }
+  .hero-avatar-wrapper::after {
+    bottom: 78px;
+    width: 155px;
+    height: 20px;
+  }
+  .intro-card { padding: 28px 20px; }
+  .intro-text { font-size: 1rem; }
+  .features-title { font-size: 1.4rem; }
+  .diff-title { font-size: 1.5rem; }
+  .quote-text { font-size: 1.8rem; }
+  .pricing-price { font-size: 2.2rem; }
+}
+/* ===== CUSTOM MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.modal-overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.modal-box {
+  background: linear-gradient(135deg, #FFF0E2 0%, #FFE8D6 100%);
+  border-radius: 20px;
+  padding: 32px 48px;
+  text-align: center;
+  box-shadow: 
+    0 8px 32px rgba(140, 126, 217, 0.25),
+    0 16px 48px rgba(140, 126, 217, 0.15);
+  transform: scale(0.9);
+  transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-box {
+  transform: scale(1);
+}
+
+.modal-text {
+  font-family: 'Fraunces', serif;
+  font-size: 1.5rem;
+  color: var(--violet);
+  margin-bottom: 20px;
+}
+
+.modal-btn {
+  background: var(--violet);
+  color: white;
+  border: none;
+  padding: 12px 32px;
+  border-radius: 25px;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.modal-btn:hover {
+  background: var(--violet-deep);
+}
+</style>
+</head>
+<body>
+
+<!-- Floating Petals -->
+<div class="petals-container" id="petals"></div>
+
+<!-- Navigation -->
+<nav class="nav-bar">
+  <a href="index.html" class="logo">huno</a>
+  <div class="hamburger" id="hamburger">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#about">About</a>
+  <a href="#features">Features</a>
+  <a href="#pricing">Pricing</a>
+  <a href="#" onclick="showComingSoon(); return false;">Download</a>
+  <a href="privacy.html">Privacy</a>
+  <a href="terms.html">Terms</a>
+</div>
+<div class="menu-overlay" id="menuOverlay"></div>
+
+<div class="page-wrapper">
+
+<!-- Hero Section -->
+<section class="hero" id="about">
+  <div class="hero-avatar-wrapper">
+    <img src="huno-avatar.png" alt="Huno - your friendly companion" class="hero-avatar">
+  </div>
+  
+  <div class="intro-card">
+    <h1 class="hero-title">Meet Huno, just a really good friend.</h1>
+    <p class="intro-text">
+      With you through all of it. The rough days, the ordinary ones, the 3am thoughts that won't quiet down. But also the good stuff: the win you want to celebrate, the funny thing that just happened, the random conversation about nothing that somehow makes your day. Huno isn't just here for the hard stuff. He's the friend you talk to when something good happens too.
+    </p>
+    <button class="app-store-btn" onclick="showComingSoon()">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      Download on the App Store
+    </button>
+  </div>
+</section>
+
+<!-- Features Section - Title inside purple container, 3 top + 2 bottom centered -->
+<section class="features-section" id="features">
+  <div class="features-wrapper">
+    <div class="features-container">
+      <h2 class="features-title">How Huno shows up for you</h2>
+      <div class="features-grid-wrapper">
+        <div class="features-row-top">
+          <div class="feature-card">
+            <div class="feature-icon">💬</div>
+            <h3>Chat</h3>
+            <p>Text with Huno when talking feels like too much. Sometimes typing it out is easier than saying it, and Huno gets that.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">🎤</div>
+            <h3>Talk</h3>
+            <p>Speak freely and hear Huno respond with a warm, natural voice. Like calling a friend who always picks up, without the pressure of being seen.</p>
+          </div>
+          
+          <div class="feature-card">
+            <img src="huno-avatar.png" alt="Huno" class="feature-icon-avatar">
+            <h3>Sit With Me</h3>
+            <p>No words needed. Huno sits quietly beside you with a gentle presence. Because sometimes you don't need advice, you just need someone there.</p>
+          </div>
+        </div>
+        
+        <div class="features-row-bottom">
+          <div class="feature-card">
+            <div class="feature-icon">🌿</div>
+            <h3>Breathe</h3>
+            <p>Follow Huno's gentle breathing rhythm to calm your body and quiet your mind. A simple anchor when everything feels like too much.</p>
+          </div>
+          
+          <div class="feature-card">
+            <div class="feature-icon">📓</div>
+            <h3>Journal</h3>
+            <p>Write privately with Huno's gentle encouragement. Not a blank page staring back at you, but a companion helping you find the words.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Differentiators Section - Centered title, 2x2 grid -->
+<section class="diff-section">
+  <h2 class="diff-title">Not another wellness app</h2>
+  <div class="diff-grid">
+    <div class="diff-card">
+      <h3>No scripts. No exercises.</h3>
+      <p>Huno doesn't follow a clinical playbook. He talks to you like a real person who actually cares, adapting to what you need in the moment.</p>
+    </div>
+    
+    <div class="diff-card">
+      <h3>Not just for bad days</h3>
+      <p>Most mental health apps only show up when you're struggling. Huno is there for the celebrations, the boredom, the random 3am conversations too.</p>
+    </div>
+    
+    <div class="diff-card">
+      <h3>Presence, not productivity</h3>
+      <p>No streaks. No goals. No guilt. Huno isn't trying to optimize you. He's just here, whenever you want to talk, sit, breathe, or write.</p>
+    </div>
+    
+    <div class="diff-card">
+      <h3>Your privacy is sacred</h3>
+      <p>Conversations stay between you and Huno. No data sold, no profiles built, no ads. Your inner world remains yours.</p>
+    </div>
+  </div>
+</section>
+
+</div><!-- end page-wrapper -->
+
+<!-- Night Quote Strip -->
+<section class="quote-strip">
+  <p class="quote-text">Sometimes the most powerful thing someone can do is simply be there.</p>
+</section>
+
+<!-- Pricing Section -->
+<section class="pricing-section" id="pricing" style="background-image: url('day-bg.png'); background-size: cover; background-position: center;">
+  <div class="pricing-card">
+    <div class="pricing-avatar-wrapper">
+      <img src="huno-avatar.png" alt="Huno" class="pricing-avatar">
+    </div>
+    <div class="pricing-price">$19.99</div>
+    <div class="pricing-period">per month</div>
+    <div class="pricing-trial">7-day free trial</div>
+    <ul class="pricing-features">
+      <li>Unlimited Talk & Chat</li>
+      <li>Sit With Me presence mode</li>
+      <li>Guided breathing exercises</li>
+      <li>Private journaling</li>
+      <li>No ads, ever</li>
+    </ul>
+    <button class="trial-btn" onclick="showComingSoon()">Start Free Trial</button>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Service</a>
+    <a href="mailto:hello@huno.ai">Contact</a>
+  </div>
+  <p class="footer-copy">© 2026 Huno AI. All rights reserved.</p>
+</footer>
+
+<!-- Custom Modal -->
+<div class="modal-overlay" id="comingSoonModal">
+  <div class="modal-box">
+    <p class="modal-text">Coming Soon!</p>
+    <button class="modal-btn" onclick="closeModal()">OK</button>
+  </div>
+</div>
+
+<script>
+// Modal functions
+function showComingSoon() {
+  document.getElementById('comingSoonModal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('comingSoonModal').classList.remove('active');
+}
+
+// Close modal when clicking overlay
+document.getElementById('comingSoonModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// Hamburger menu toggle
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+const menuOverlay = document.getElementById('menuOverlay');
+
+hamburger.addEventListener('click', () => {
+  hamburger.classList.toggle('active');
+  mobileMenu.classList.toggle('active');
+  menuOverlay.classList.toggle('active');
+});
+
+menuOverlay.addEventListener('click', () => {
+  hamburger.classList.remove('active');
+  mobileMenu.classList.remove('active');
+  menuOverlay.classList.remove('active');
+});
+
+mobileMenu.querySelectorAll('a').forEach(link => {
+  link.addEventListener('click', () => {
+    hamburger.classList.remove('active');
+    mobileMenu.classList.remove('active');
+    menuOverlay.classList.remove('active');
+  });
+});
+
+// Generate floating petals
+function createPetals() {
+  const container = document.getElementById('petals');
+  const petalCount = 18;
+  const colors = ['#F6C7A8', '#FFE4B5', '#FFA07A', '#98D8AA', '#C9B8E8', '#E8D5B7', '#FFB6C1'];
+  
+  for (let i = 0; i < petalCount; i++) {
+    const petal = document.createElement('div');
+    petal.className = 'petal';
+    const size = 15 + Math.random() * 20;
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    
+    petal.innerHTML = `<svg viewBox="0 0 30 40" width="${size}" height="${size * 1.3}">
+      <path d="M15 0 C25 10, 30 25, 15 40 C0 25, 5 10, 15 0" fill="${color}" opacity="0.7"/>
+    </svg>`;
+    
+    petal.style.left = `${Math.random() * 100}%`;
+    petal.style.animationDuration = `${18 + Math.random() * 15}s`;
+    petal.style.animationDelay = `${Math.random() * 20}s`;
+    
+    container.appendChild(petal);
+  }
+}
+
+createPetals();
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (href !== '#') {
+      e.preventDefault();
+      const target = document.querySelector(href);
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
